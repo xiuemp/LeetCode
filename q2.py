@@ -1,3 +1,5 @@
+##补齐以简化成统一循环；两数来保存前后进位
+
 class ListNode:
     def __init__(self, x):
         self.val = x
@@ -6,9 +8,10 @@ class ListNode:
 l1 = ListNode(7)
 l1.next = ListNode(7)
 
-l2 = ListNode(2)
-l2.next = ListNode(3)
-l2.next = ListNode(4)
+l2 = ListNode(3)
+l2.next = ListNode(2)
+l2.next.next = ListNode(4)
+l2.next.next.next = ListNode(9)
 
 class Solution:
 
@@ -21,15 +24,6 @@ class Solution:
             l = l.next
             print "--" + str(l.val),
 
-    def len(self, l):
-        if l == None:
-            return 0
-        i = 1
-        while l.next != None:
-            i += 1
-            l = l.next
-        return i
-
     # @param {ListNode} l1
     # @param {ListNode} l2
     # @return {ListNode}
@@ -38,51 +32,44 @@ class Solution:
             return l2
         if l2 == None:
             return l1
+  
         l3 = ListNode(0)
         p1 = l1
         p2 = l2
         p3 = l3
 
+        # make up the same long list
+        while (p1.next != None or p2.next != None):
+            if (p1.next == None):
+                p1.next = ListNode(0)
+            
+            if (p2.next == None):
+                p2.next = ListNode(0)
+            
+            p1 = p1.next
+            p2 = p2.next
+        
+        p1 = l1
+        p2 = l2
+
         tmp_p = 0
         tmp_a = 0
         sum_tmp = 0
-        len1 = self.len(l1)
-        len2 = self.len(l2)
-        i = 0
+    
         # tackle the intersection
-        for i in range(min(len1, len2)):
+        while (p1 != None):
             tmp_p = tmp_a
             tmp_a = 0
-            sum_tmp = p1.val + p2.val
-            if sum_tmp >= 10:
-                sum_tmp = sum_tmp - 10
-                tmp_a = 1
-            val = sum_tmp + tmp_p
-            p3.next = ListNode(val)
-            p3 = p3.next
-            p1 = p1.next
-            p2 = p2.next
-
-    # figure out the longer list
-        if self.len(l1) >= self.len(l2):
-            longer = p1
-        else:
-            longer = p2
-
-    # tackle the rest
-        for i in range(min(len1, len2)+1, max(len1, len2) +1):
-            tmp_p = tmp_a
-            tmp_a = 0
-            sum_tmp = tmp_p + longer.next.val
+            sum_tmp = p1.val + p2.val + tmp_p
             if sum_tmp >= 10:
                 sum_tmp = sum_tmp - 10
                 tmp_a = 1
             p3.next = ListNode(sum_tmp)
             p3 = p3.next
-            long = long.next
-            print "Hello"
+            p1 = p1.next
+            p2 = p2.next
 
-    # tackle the rest
+        # tackle the rest
         if tmp_a == 1:
             p3.next = ListNode(1)
 
